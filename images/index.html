@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ร้านยาสีฟันสมุนไพร & ระบบแพ็คสินค้า</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { position: absolute; left: 0; top: 0; width: 100%; border: 2px solid #000; padding: 20px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+
+    <nav class="bg-teal-600 text-white p-4 shadow-md flex justify-between items-center">
+        <h1 class="text-xl font-bold">🦷 SmileHerb ยาสีฟันพรีเมียม</h1>
+        <div class="space-x-2">
+            <button onclick="switchTab('shop')" class="bg-white text-teal-700 px-4 py-1.5 rounded font-semibold">หน้าร้าน (สั่งซื้อ)</button>
+            <button onclick="switchTab('pack')" class="bg-teal-800 text-white px-4 py-1.5 rounded font-semibold">หลังบ้าน (หยิบ & แพ็คสินค้า)</button>
+        </div>
+    </nav>
+
+    <div id="shopSection" class="max-w-4xl mx-auto p-6">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">ยาสีฟันสูตรเข้มข้น ดูแลครบจบในหลอดเดียว</h2>
+            <p class="text-gray-600 mt-2">เลือกสูตรที่ใช่สำหรับคุณ ส่งตรงถึงหน้าบ้าน</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-5 rounded-xl shadow border">
+                <img src="images/sku1.jpg" onerror="this.src='https://placehold.co/400x300/0d9488/white?text=SKU-001+Herbal'" alt="สูตรสมุนไพร" class="w-full h-48 object-cover rounded-lg mb-4">
+                <span class="text-xs bg-teal-100 text-teal-800 px-2 py-1 rounded">SKU-001</span>
+                <h3 class="text-xl font-bold mt-2">สูตรสมุนไพรดั้งเดิม (100g)</h3>
+                <p class="text-gray-500 text-sm mb-3">ลดกลิ่นปาก ลมหายใจหอมสดชื่นยาวนาน</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-lg font-bold text-teal-600">฿150</span>
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm">จำนวน:</label>
+                        <input type="number" id="qty1" value="1" min="0" onchange="calcTotal()" class="w-16 border rounded p-1 text-center">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow border">
+                <img src="images/sku2.jpg" onerror="this.src='https://placehold.co/400x300/0284c7/white?text=SKU-002+Whitening'" alt="สูตรฟันขาว" class="w-full h-48 object-cover rounded-lg mb-4">
+                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">SKU-002</span>
+                <h3 class="text-xl font-bold mt-2">สูตรไวท์เทนนิ่ง ฟันขาว (100g)</h3>
+                <p class="text-gray-500 text-sm mb-3">ขจัดคราบชา กาแฟ อ่อนโยนต่อเคลือบฟัน</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-lg font-bold text-teal-600">฿180</span>
+                    <div class="flex items-center space-x-2">
+                        <label class="text-sm">จำนวน:</label>
+                        <input type="number" id="qty2" value="0" min="0" onchange="calcTotal()" class="w-16 border rounded p-1 text-center">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow border">
+            <h3 class="text-xl font-bold mb-4 border-b pb-2">ข้อมูลจัดส่งสินค้า</h3>
+            <form id="orderForm" onsubmit="submitOrder(event)" class="space-y-4">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium">ชื่อ-นามสกุล ผู้รับ</label>
+                        <input type="text" id="custName" required class="w-full border rounded p-2 mt-1">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">เบอร์โทรศัพท์</label>
+                        <input type="tel" id="custPhone" required class="w-full border rounded p-2 mt-1">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium">ที่อยู่จัดส่ง (พร้อมรหัสไปรษณีย์)</label>
+                    <textarea id="custAddress" rows="2" required class="w-full border rounded p-2 mt-1"></textarea>
+                </div>
+                <div class="flex justify-between items-center pt-4 border-t">
+                    <div class="text-lg font-bold">ยอดรวมทั้งหมด: <span id="totalPrice" class="text-teal-600 text-2xl">150</span> บาท</div>
+                    <button type="submit" id="submitBtn" class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-lg font-bold">ยืนยันการสั่งซื้อ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="packSection" class="max-w-5xl mx-auto p-6 hidden">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">📦 รายการคำสั่งซื้อ (หยิบและแพ็คสินค้า)</h2>
+            <button onclick="loadOrders()" class="bg-blue-600 text-white px-4 py-2 rounded text-sm">🔄 รีเฟรชข้อมูล</button>
+        </div>
+
+        <div class="bg-white rounded-xl shadow overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-100 border-b text-sm">
+                        <th class="p-3">รหัสออเดอร์</th>
+                        <th class="p-3">ลูกค้า</th>
+                        <th class="p-3">รายการหยิบสินค้า (Pick List)</th>
+                        <th class="p-3">สถานะ</th>
+                        <th class="p-3 text-center">จัดการ</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody" class="divide-y text-sm">
+                    <tr><td colspan="5" class="p-4 text-center">กำลังโหลดข้อมูล...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="labelModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-lg w-full p-6">
+            <div id="printArea" class="border-2 border-black p-5 rounded">
+                <div class="flex justify-between border-b-2 border-black pb-2 mb-3">
+                    <div>
+                        <p class="font-bold text-lg">ผู้ส่ง: ร้าน SmileHerb</p>
+                        <p class="text-xs">123 ถ.พหลโยธิน เขตจตุจักร กทม. 10900</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="border border-black px-2 py-1 font-bold text-sm" id="lblOrderId">ORD-0000</span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <p class="text-sm font-bold underline">กรุณาส่ง (ผู้รับ):</p>
+                    <p class="text-lg font-bold mt-1" id="lblName">-</p>
+                    <p class="text-md font-semibold" id="lblPhone">-</p>
+                    <p class="text-md mt-1" id="lblAddress">-</p>
+                </div>
+                <div class="border-t border-dashed border-black pt-2 text-xs">
+                    <p class="font-bold">รายการสินค้าในกล่อง:</p>
+                    <p id="lblItems">-</p>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end space-x-2">
+                <button onclick="window.print()" class="bg-green-600 text-white px-4 py-2 rounded font-bold">🖨️ พิมพ์ใบจ่าหน้า</button>
+                <button onclick="closeModal()" class="bg-gray-400 text-white px-4 py-2 rounded">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEmb0BrJjonbFykqepatUanVoN6vZPEWvSEgjY0uj2qdpk7u2CjroNdDwSCOBE3Cw/exec";
+
+        function switchTab(tab) {
+            document.getElementById('shopSection').classList.toggle('hidden', tab !== 'shop');
+            document.getElementById('packSection').classList.toggle('hidden', tab !== 'pack');
+            if(tab === 'pack') loadOrders();
+        }
+
+        function calcTotal() {
+            const q1 = parseInt(document.getElementById('qty1').value) || 0;
+            const q2 = parseInt(document.getElementById('qty2').value) || 0;
+            document.getElementById('totalPrice').innerText = (q1 * 150) + (q2 * 180);
+        }
+
+        function submitOrder(e) {
+            e.preventDefault();
+            const q1 = parseInt(document.getElementById('qty1').value) || 0;
+            const q2 = parseInt(document.getElementById('qty2').value) || 0;
+            if(q1 + q2 === 0) return alert("กรุณาเลือกสินค้าอย่างน้อย 1 ชิ้น");
+
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = "กำลังบันทึกข้อมูล...";
+
+            const formData = new URLSearchParams();
+            formData.append('name', document.getElementById('custName').value);
+            formData.append('phone', document.getElementById('custPhone').value);
+            formData.append('address', document.getElementById('custAddress').value);
+            formData.append('sku1', q1);
+            formData.append('sku2', q2);
+            formData.append('total', (q1 * 150) + (q2 * 180));
+
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(res => res.json())
+                .then(data => {
+                    alert("สั่งซื้อสำเร็จ! รหัสออเดอร์ของคุณคือ: " + data.orderId);
+                    document.getElementById('orderForm').reset();
+                    calcTotal();
+                    btn.disabled = false;
+                    btn.innerText = "ยืนยันการสั่งซื้อ";
+                })
+                .catch(err => {
+                    alert("บันทึกสำเร็จ! (หากไม่ขึ้นให้ลองกดดูใน Google Sheet)");
+                    btn.disabled = false;
+                    btn.innerText = "ยืนยันการสั่งซื้อ";
+                });
+        }
+
+        function loadOrders() {
+            const tbody = document.getElementById('orderTableBody');
+            tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center">กำลังดึงข้อมูลจาก Google Sheet...</td></tr>';
+            
+            fetch(SCRIPT_URL)
+                .then(res => res.json())
+                .then(orders => {
+                    tbody.innerHTML = '';
+                    orders.reverse().forEach(o => {
+                        const itemsText = SKU-001 (สมุนไพร): ${o.SKU1_Qty} หลอด | SKU-002 (ฟันขาว): ${o.SKU2_Qty} หลอด;
+                        const isPacked = o.Status.includes("แพ็คแล้ว");
+                        
+                        tbody.innerHTML += `
+                            <tr>
+                                <td class="p-3 font-bold">${o.OrderID}</td>
+                                <td class="p-3">${o.CustomerName}<br><span class="text-xs text-gray-500">${o.Phone}</span></td>
+                                <td class="p-3 text-teal-700 font-medium">${itemsText}</td>
+                                <td class="p-3">
+                                    <span class="px-2 py-1 rounded text-xs ${isPacked ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                        ${o.Status}
+                                    </span>
+                                </td>
+                                <td class="p-3 text-center space-x-1">
+                                    <button onclick='openLabel(${JSON.stringify(o)})' class="bg-gray-800 text-white px-2.5 py-1 rounded text-xs">📄 จ่าหน้าพัสดุ</button>
+                                    ${!isPacked ? <button onclick="markPacked('${o.OrderID}')" class="bg-green-600 text-white px-2.5 py-1 rounded text-xs">✅ ยืนยันแพ็ค</button> : ''}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                });
+        }
+
+        function markPacked(orderId) {
+            const formData = new URLSearchParams();
+            formData.append('action', 'updateStatus');
+            formData.append('orderId', orderId);
+
+            fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(() => loadOrders());
+        }
+
+        function openLabel(order) {
+            document.getElementById('lblOrderId').innerText = order.OrderID;
+            document.getElementById('lblName').innerText = order.CustomerName;
+            document.getElementById('lblPhone').innerText = "โทร: " + order.Phone;
+            document.getElementById('lblAddress').innerText = order.Address;
+            document.getElementById('lblItems').innerText = SKU-001: ${order.SKU1_Qty} ชิ้น, SKU-002: ${order.SKU2_Qty} ชิ้น (ยอดชำระ: ฿${order.TotalAmount});
+            document.getElementById('labelModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('labelModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+ส่งเมื่อ 1 นาทีที่แล้ว
+เขียนข้อความ
+เขียนถึง อิก คิว ยะ
